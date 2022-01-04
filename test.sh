@@ -2,16 +2,18 @@
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-test_environment() {
-	docker-compose up -d
+symfony=${SYMFONY_CLI:-symfony}
 
-	mkdir -p include/
-	cp dump-env.php include/
-	# symfony php dump-env.php
-	# symfony php include/dump-env.php
-	diff <(symfony php dump-env.php) <(symfony php include/dump-env.php)
-	docker-compose ps
-	docker-compose down
+test_environment() {
+    docker-compose up -d
+
+    mkdir -p include/
+    cp dump-env.php include/
+    # symfony php dump-env.php
+    # symfony php include/dump-env.php
+    diff <($symfony php dump-env.php) <($symfony php include/dump-env.php)
+    docker-compose ps
+    docker-compose down
 }
 
 echo COMPOSE_PROJECT_NAME=is_this_a_bug_or_a_feature > .env
@@ -32,7 +34,7 @@ EOF
 echo COMPOSE_PROJECT_NAME="$(basename "$PWD")" > .env
 cat <<EOF
 ================================================================================
-${bold}Comparing environments with .env file{$normal}
+${bold}Comparing environments with .env file${normal}
 
 $(cat .env)
 --------------------------------------------------------------------------------
